@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogo do Alfabeto</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            color: #fff;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            padding: 20px;
+        }
+        .tema {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #ffffff;
+            background: #1e3a8a;
+            padding: 15px 25px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        .letra {
+            font-size: 6em;
+            color: #cfe3fc;
+            margin: 20px 0;
+        }
+        .timer {
+            font-size: 2.5em;
+            color: #ffcccb;
+            margin: 20px 0;
+        }
+        #mensagem {
+            font-size: 2em;
+            color: #f44336;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        button {
+            padding: 15px 30px;
+            font-size: 1.5em;
+            font-weight: bold;
+            cursor: pointer;
+            color: #fff;
+            background: #1e3a8a;
+            border: none;
+            border-radius: 8px;
+            margin: 10px;
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+        button:hover {
+            background: #2b6cb0;
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="tema">Tema: <span id="tema">---</span></div>
+        <div class="letra">Letra: <span id="letra">---</span></div>
+        <div class="timer">Tempo: <span id="tempo">15</span>s</div>
+        <button id="botaoTema">Sortear Tema</button>
+        <button id="botaoLetra" style="display: none;">Próxima Letra</button>
+        <div id="mensagem"></div>
+    </div>
+
+    <audio id="ticTac" src="ticTac.wav" loop></audio>
+    <audio id="campainha" src="campainha.wav"></audio>
+
+    <script>
+        const temas = [
+            "Nomes de Animais", "Filmes", "Atores", "Frutas", "Países",
+            "Cores", "Profissões", "Cidades do Brasil", "Marcas de Carro",
+            "Esportes", "Objetos", "Nomes Masculinos", "Nomes Femininos",
+            "Instrumentos Musicais", "Times de Futebol", "Rios", "Montanhas",
+            "Capitais do Mundo", "Pontos Turísticos", "Aplicativos", "Sobremesas",
+            "Bebidas", "Estilos de Música", "Festivais", "Desenhos Animados",
+            "Séries de TV", "Personagens de Livros", "Personagens Históricos",
+            "Eventos Históricos", "Feriados", "Planetas", "Elementos Químicos",
+            "Tipos de Flor", "Animais Aquáticos", "Insetos", "Super-heróis",
+            "Vilões", "Personagens de Filmes", "Celebridades", "Tecnologias",
+            "Idiomas", "Tipos de Dança", "Jogos de Tabuleiro", "Jogos Eletrônicos",
+            "Marcas de Roupas", "Marcas de Calçados", "Tipos de Esporte Aquático",
+            "Ruas Famosas", "Parques Nacionais", "Livros Clássicos"
+        ];
+
+        let alfabeto = [..."ABCDEFGHIJKLMNOPQRSTUVWXYZ"].map(l => l.toUpperCase());
+        let letrasUsadas = [];
+        let temporizador;
+        let tempoRestante = 15;
+
+        const temaElemento = document.getElementById("tema");
+        const letraElemento = document.getElementById("letra");
+        const tempoElemento = document.getElementById("tempo");
+        const mensagemElemento = document.getElementById("mensagem");
+        const botaoTema = document.getElementById("botaoTema");
+        const botaoLetra = document.getElementById("botaoLetra");
+        const ticTac = document.getElementById("ticTac");
+        const campainha = document.getElementById("campainha");
+
+        function embaralhar(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        function resetarTemporizador() {
+            clearInterval(temporizador);
+            tempoRestante = 15;
+            tempoElemento.textContent = tempoRestante;
+            ticTac.play();
+
+            temporizador = setInterval(() => {
+                tempoRestante--;
+                tempoElemento.textContent = tempoRestante;
+
+                if (tempoRestante <= 0) {
+                    clearInterval(temporizador);
+                    ticTac.pause();
+                    ticTac.currentTime = 0;
+                    campainha.play();
+                    mensagemElemento.textContent = "Tempo esgotado! Clique em Sortear Tema para começar novamente.";
+                    botaoTema.style.display = "block";
+                    botaoLetra.style.display = "none";
+                }
+            }, 1000);
+        }
+
+        function sortearTema() {
+            const temaAleatorio = temas[Math.floor(Math.random() * temas.length)];
+            temaElemento.textContent = temaAleatorio;
+            alfabeto = [..."ABCDEFGHIJKLMNOPQRSTUVWXYZ"].map(l => l.toUpperCase());
+            embaralhar(alfabeto);
+            letrasUsadas = [];
+            mensagemElemento.textContent = "";
+            botaoTema.style.display = "none";
+            botaoLetra.style.display = "block";
+            sortearLetra();
+        }
+
+        function sortearLetra() {
+            mensagemElemento.textContent = "";
+
+            if (alfabeto.length === 0) {
+                embaralhar(letrasUsadas);
+                alfabeto = letrasUsadas;
+                letrasUsadas = [];
+            }
+
+            const letraSelecionada = alfabeto.shift();
+            letrasUsadas.push(letraSelecionada);
+
+            letraElemento.textContent = letraSelecionada;
+            resetarTemporizador();
+        }
+
+        botaoTema.addEventListener("click", sortearTema);
+        botaoLetra.addEventListener("click", sortearLetra);
+
+        // Começo do jogo
+        mensagemElemento.textContent = "Clique em Sortear Tema para começar.";
+    </script>
+</body>
+</html>
