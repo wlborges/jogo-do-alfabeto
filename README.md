@@ -20,9 +20,9 @@ O Jogo do Alfabeto é uma aplicação interativa onde os jogadores testam sua cr
    - Após usar todas as letras do alfabeto, elas serão embaralhadas automaticamente para começar uma nova rodada.
 
 ## Funcionalidades
-- **Variedade de Temas**: O jogo conta com mais de 50 temas diferentes, como "Nomes de Animais", "Filmes", "Cidades do Brasil" e muito mais.
+- **Variedade de Temas**: O jogo conta com mais de 200 temas diferentes, como "Nomes de Animais", "Filmes", "Cidades do Brasil" e muito mais.
 - **Tempo Limitado**: Um cronômetro de 15 segundos mantém o jogo dinâmico.
-- **Som de Tic-Tac e Alarme**: Sons de fundo tornam o jogo mais envolvente (substitua os arquivos locais `ticTac.mp3` e `campainha.mp3` caso necessário).
+- **Som de Tic-Tac e Alarme**: Sons de fundo tornam o jogo mais envolvente (substitua os arquivos locais `ticTac.wav` e `campainha.wav` caso necessário).
 
 ## Tecnologias Utilizadas
 - **HTML5**
